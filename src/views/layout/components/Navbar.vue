@@ -3,7 +3,7 @@
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
     <breadcrumb></breadcrumb>
     <div class="right-menu">
-      <el-tooltip effect="dark" content="navbar.screenfull" placement="bottom">
+      <el-tooltip effect="dark" content="全屏" placement="bottom">
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
     <el-dropdown class="avatar-container" trigger="click">
@@ -14,11 +14,11 @@
       <el-dropdown-menu class="user-dropdown" slot="dropdown">
         <router-link class="inlineBlock" to="/">
           <el-dropdown-item>
-            Home
+            首页
           </el-dropdown-item>
         </router-link>
         <el-dropdown-item divided>
-          <span @click="logout" style="display:block;">LogOut</span>
+          <span @click="logout" style="display:block;">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
