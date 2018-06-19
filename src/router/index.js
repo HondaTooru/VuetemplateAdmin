@@ -29,11 +29,26 @@ export const constantRouterMap = [
     component: Layout,
     redirect: 'dashboard',
     name: 'Dashboard',
-    children: [{
-      path: 'dashboard',
-      meta: { title: '首页', icon: 'dashboard', noCache: true },
-      component: () => import('@/views/dashboard/index')
-    }]
+    children: [
+      { path: 'dashboard', meta: { title: '首页', noCache: true, icon: 'dashboard' }, component: () => import('@/views/dashboard') },
+      { path: 'car', name: 'Car', meta: { title: '赛车设置' }, hidden: true, component: () => import('@/views/dashboard/car') },
+      { path: 'horse', name: 'Horse', meta: { title: '赛马设置' }, hidden: true, component: () => import('@/views/dashboard/horse') },
+      { path: 'shake', name: 'Shake', meta: { title: '摇一摇设置' }, hidden: true, component: () => import('@/views/dashboard/shake') },
+      { path: 'money', name: 'Money', meta: { title: '数钱设置' }, hidden: true, component: () => import('@/views/dashboard/money') },
+      { path: 'dapsong', name: 'DapSong', meta: { title: '点歌设置' }, hidden: true, component: () => import('@/views/dashboard/dapsong') }
+    ]
+  },
+  { path: '/vote',
+    name: 'Vote',
+    component: Layout,
+    redirect: '/vote/voteset',
+    hidden: true,
+    meta: { title: '投票管理' },
+    children: [
+      { path: 'voteset', name: 'voteset', meta: { title: '投票列表' }, component: () => import('@/views/dashboard/vote') },
+      { path: 'voterecords', name: 'voteRecords', meta: { title: '投票记录' }, component: () => import('@/views/dashboard/vote/voterecords') },
+      { path: 'votecreate', name: 'voteCreate', meta: { title: '创建主题' }, component: () => import('@/views/dashboard/vote/creteth') }
+    ]
   },
   {
     path: '/function',
@@ -62,9 +77,13 @@ export const constantRouterMap = [
     children: [
       { path: 'actorlist', name: 'Actorlist', component: () => import('@/views/opration/actorlist'), meta: { title: '艺人列表', icon: 'actor' }},
       { path: 'bandlist', name: 'Bandlist', component: () => import('@/views/opration/bandlist'), meta: { title: '乐队列表', icon: 'band' }},
+      { path: 'addband', name: 'AddBand', component: () => import('@/views/opration/addband'), meta: { title: '新增乐队', icon: '' }, hidden: true },
       { path: 'songlist', name: 'Songlist', component: () => import('@/views/opration/songlist'), meta: { title: '歌曲列表', icon: 'song' }},
       { path: 'inviter', name: 'Inviter', component: () => import('@/views/opration/inviter'), meta: { title: '邀请艺人', icon: 'inviter' }},
-      { path: 'messagepush', name: 'MessagePush', component: () => import('@/views/opration/messagepush'), meta: { title: '消息推送', icon: 'message' }}
+      { path: 'messagepush', name: 'MessagePush', component: () => import('@/views/opration/messagepush'), meta: { title: '消息推送', icon: 'message' }},
+      { path: 'addsong', name: 'AddSong', component: () => import('@/views/opration/addsong'), meta: { title: '新增乐队', icon: '' }, hidden: true },
+      { path: 'songsrecords', name: 'SongsRecords', component: () => import('@/views/opration/songsrecords'), meta: { title: '点歌记录', icon: '' }, hidden: true },
+      { path: 'snednewmsg', name: 'SendNewMsg', component: () => import('@/views/opration/sendnewmsg'), meta: { title: '发送新消息', icon: '' }, hidden: true }
     ]
   },
   {
@@ -74,7 +93,7 @@ export const constantRouterMap = [
     name: 'Financial',
     meta: { title: '财务管理', icon: 'financial' },
     children: [
-      { path: 'cashaccount', name: 'Cashaccount', component: () => import('@/views/financial/cashAccount'), meta: { title: '体现账号', icon: 'cash' }},
+      { path: 'cashaccount', name: 'Cashaccount', component: () => import('@/views/financial/cashAccount'), meta: { title: '提现账号', icon: 'cash' }},
       { path: 'userconsumption', name: 'Userconsumption', component: () => import('@/views/financial/userconsumption'), meta: { title: '用户消费列表', icon: 'userconsumption' }},
       { path: 'songrecords', name: 'Songrecords', component: () => import('@/views/financial/songrecords'), meta: { title: '点歌记录', icon: 'songrecords' }}
     ]
