@@ -16,7 +16,7 @@
       <el-table-column label="礼物总金额" prop="giftTotal"></el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
-          <el-button type="primary">删除</el-button>
+          <el-button type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
