@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { userlist } from '@/api/userlist'
+
 export default {
   name: 'userslist',
   data() {
@@ -41,9 +43,17 @@ export default {
       ]
     }
   },
+  created() {
+    this.getUserList()
+  },
   methods: {
     deleteRow(index, rows) {
       rows.splice(index, 1)
+    },
+    getUserList() {
+      userlist().then(res => {
+        console.log(res)
+      })
     }
   }
 }
