@@ -74,9 +74,13 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(res => {
             this.loading = false
-            this.$router.push({ path: '/' })
+            if (res.data.code === 1) {
+              this.$router.push({ path: '/' })
+            } else {
+              this.$message.error('您的用户名或密码错误!')
+            }
           }).catch(() => {
             this.loading = false
           })

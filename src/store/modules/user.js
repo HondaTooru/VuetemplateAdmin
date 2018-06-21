@@ -30,10 +30,12 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByusername(username, userInfo.password).then(response => {
-          const data = response.data
-          setToken(data.token)
-          commit('SET_TOKEN', data.token)
-          resolve()
+          if (response.data.code === 1) {
+            const data = response.data.user
+            setToken(data.token)
+            commit('SET_TOKEN', data.token)
+          }
+          resolve(response)
         }).catch(error => {
           reject(error)
           console.log(error)

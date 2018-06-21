@@ -19,8 +19,11 @@ const userMap = {
 
 export default {
   loginByUserName: config => {
-    const { username } = JSON.parse(config.body)
-    return userMap[username]
+    const { username, password } = JSON.parse(config.body)
+    if (password !== 'admin') {
+      return { code: 0, msg: '密码错误' }
+    }
+    return { code: 1, user: userMap[username] }
   },
   getUserInfo: config => {
     const { token } = param2Obj(config.url)
