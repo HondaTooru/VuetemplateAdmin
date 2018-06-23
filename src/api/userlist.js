@@ -16,10 +16,18 @@ export function updateUser(data) {
   })
 }
 
-export function deleteUser(data) {
+export function speechUser(data) {
   return request({
-    url: '/user/delete',
+    url: '/user/speech',
     method: 'post',
     data
+  })
+}
+
+export function feedback(query) {
+  return request({
+    url: '/user/feedback',
+    method: 'get',
+    params: query
   })
 }

@@ -1,8 +1,17 @@
 import request from '@/utils/request'
 
-export function getRecords() {
+export function getRecords(query) {
   return request({
     url: '/user/records',
-    method: 'post'
+    method: 'get',
+    params: query
+  })
+}
+
+export function delrecords(query) {
+  return request({
+    url: '/user/delrecords',
+    method: 'get',
+    params: query
   })
 }

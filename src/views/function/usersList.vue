@@ -59,7 +59,8 @@
         <template slot-scope="scope">
           <el-button-group>
             <el-button type="primary" @click.native="handleViews(scope.row)">修改权限</el-button>
-            <el-button type="danger" @click.native.prevent="deleteRow(scope.row)">删除</el-button>
+            <el-button type="danger" @click.native.prevent="changeSpeech(scope.row)" v-if="scope.row.isSpeech">禁言</el-button>
+            <el-button type="success" @click.native.prevent="changeSpeech(scope.row)" v-else>解除禁言</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -81,7 +82,7 @@
 </template>
 
 <script>
-import { userlist, updateUser, deleteUser } from '@/api/userlist'
+import { userlist, updateUser, speechUser } from '@/api/userlist'
 import waves from '@/directive/waves'
 export default {
   name: 'userslist',
@@ -129,16 +130,19 @@ export default {
     this.getUserList()
   },
   methods: {
-    deleteRow(row) {
-      this.$confirm('您确认删除此用户？', '提示', {
+    changeSpeech(item) {
+      const msg = item.isSpeech ? '禁言' : '解除禁言'
+      this.$confirm(`您确认此用户${msg}？`, '提示', {
         type: 'warning'
       }).then(() => {
-        deleteUser(row).then(res => {
-          this.list.splice(row.$index, 1)
+        speechUser(item.row).then(res => {
+          // this.list.splice(item.$index, 1)
+          item.isSpeech = !item.isSpeech
           this.$message({
             type: 'success',
             message: res.data.msg
           })
+          // if (!this.list.length) this.getUserList()
         })
       }).catch(error => {
         return error
@@ -154,6 +158,7 @@ export default {
     getUserList() {
       this.loading = true
       userlist(this.listQuery).then(res => {
+        console.log(res)
         this.list = res.data.items
         this.total = res.data.total
         this.loading = false

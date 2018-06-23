@@ -17,14 +17,14 @@ for (let i = 0; i < count; i++) {
     freeGift: 20,
     freeBully: 20,
     freeSong: 1,
-    'group|1-3': 1
+    'group|1-3': 1,
+    'isSpeech': '@boolean()'
   }))
 }
 
 export default {
   userList: config => {
     const { group, type, name, page = 1, limit = 20, sort } = param2Obj(config.url)
-
     let mockList = List.filter(item => {
       if (group && item.group !== +group) return false
       if (type && item.type !== +type) return false
@@ -40,5 +40,6 @@ export default {
     }
   },
   updateUser: () => ({ msg: '修改成功' }),
-  deleteUser: () => ({ msg: '删除成功' })
+  speechUser: () => ({ msg: '操作成功' }),
+  feedback: () => ({ msg: '提交成功' })
 }
