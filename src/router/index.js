@@ -83,7 +83,8 @@ export const constantRouterMap = [
       { path: 'messagepush', name: 'MessagePush', component: () => import('@/views/opration/messagepush'), meta: { title: '消息推送', icon: 'message' }},
       { path: 'addsong', name: 'AddSong', component: () => import('@/views/opration/addsong'), meta: { title: '新增乐队', icon: '' }, hidden: true },
       { path: 'songsrecords', name: 'SongsRecords', component: () => import('@/views/opration/songsrecords'), meta: { title: '点歌记录', icon: '' }, hidden: true },
-      { path: 'snednewmsg', name: 'SendNewMsg', component: () => import('@/views/opration/sendnewmsg'), meta: { title: '发送新消息', icon: '' }, hidden: true }
+      { path: 'snednewmsg', name: 'SendNewMsg', component: () => import('@/views/opration/sendnewmsg'), meta: { title: '发送新消息', icon: '' }, hidden: true },
+      { path: 'views', name: 'View', component: () => import('@/views/opration/actorcharge'), meta: { title: '收入列表', icon: '' }, hidden: true }
     ]
   },
   {
