@@ -6,7 +6,7 @@
         <el-button type="danger" icon="el-icon-service" @click.native="$router.push({ name: 'SongsRecords' })">点歌记录</el-button>
       </el-button-group>
     </div>
-    <el-table border :data="list">
+    <el-table border :data="list" v-loading="loading">
       <el-table-column prop="id" label="排序"></el-table-column>
       <el-table-column label="歌曲名称">
         <template slot-scope="scope">
@@ -28,32 +28,80 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="danger" @click.native="onDeleted(scope.$index, list)">删除</el-button>
+          <el-button type="danger" @click.native="onDeleted(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      v-if="list.length"
+      background
+      layout="total, sizes, prev, pager, next, jumper"
+      :current-page.sync="CurrentPage"
+      :page-sizes="[10, 20, 30, 50]"
+      :page-size="listQuery.limit"
+      :total="total"
+      style="margin-top: 20px;text-align:right;"
+      @current-change="handleChange"
+      @size-change="handleSizeChange"
+      >
+    </el-pagination>
   </div>
 </template>
 
 <script>
+import { getSongList } from '@/api/opration'
+
 export default {
   name: 'songlist',
   data() {
     return {
-      list: [
-        { id: 1, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: true },
-        { id: 2, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: false },
-        { id: 3, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: false },
-        { id: 4, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: true },
-        { id: 5, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: true },
-        { id: 6, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: false },
-        { id: 7, songName: '洗刷刷', song: '花儿乐队', price: 1000, count: 2, addTime: '2018-11-11', isOpen: false }
-      ]
+      CurrentPage: 1,
+      listQuery: {
+        page: 1,
+        limit: 10
+      },
+      total: 0,
+      loading: true,
+      list: []
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
-    onDeleted(index, rows) {
-      rows.splice(index, 1)
+    onDeleted(index) {
+      this.$confirm('您确定删除吗？', '提示', {
+        type: 'warning'
+      }).then(res => {
+        this.list.splice(index, 1)
+        this.$message({
+          message: '删除成功!',
+          type: 'success',
+          duration: 2000
+        })
+        if (!this.list.length) this.getList()
+      }).catch(err => {
+        return err
+      })
+    },
+    getList() {
+      this.loading = true
+      getSongList(this.listQuery).then(res => {
+        this.loading = false
+        this.list = res.data.list
+        this.total = res.data.total
+        console.log(res)
+      })
+    },
+    handleChange(val) {
+      this.listQuery.page = val
+      this.getList()
+    },
+    handleSizeChange(val) {
+      this.CurrentPage = 1
+      this.listQuery.page = 1
+      this.listQuery.limit = val
+      this.getList()
     }
   }
 }

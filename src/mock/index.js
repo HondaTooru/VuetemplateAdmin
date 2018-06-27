@@ -6,7 +6,8 @@ import Magic from './magicset'
 import Gift from './giftset'
 import Help from './helpcenter'
 import bullyScreen from './bullyScreen'
-import { Opration, ActorCharge } from './opration'
+import { Opration, ActorCharge, BandList, SongList, getRecords, InviterList } from './opration'
+
 Mock.setup({
   timeout: '250-600'
 })
@@ -31,6 +32,10 @@ Mock.mock(/\/set\/giftlist\.*/, 'get', Gift.getList)
 // opration
 Mock.mock(/\/opration\/actorlist\.*/, 'get', Opration.actorList)
 Mock.mock(/\/opration\/actorcharge\.*/, 'get', ActorCharge.actorCharge)
+Mock.mock(/\/opration\/bandlist\.*/, 'get', BandList.getBandlist)
+Mock.mock(/\/opration\/songlist\.*/, 'get', SongList.getSongList)
+Mock.mock(/\/opration\/songsrecords\.*/, 'get', getRecords.getSongRecords)
+Mock.mock(/\/opration\/inviterlist\.*/, 'get', InviterList.list)
 
 Mock.mock(/\/help\/guide\.*/, 'get', Help.ArticleList)
 export default Mock

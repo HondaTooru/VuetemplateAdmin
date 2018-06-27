@@ -75,7 +75,6 @@ export default {
       })
     },
     selectRange(val) {
-      // console.log(parseTime(val[0]))
       this.listQuery.start = parseTime(val[0])
       this.listQuery.end = parseTime(val[1])
       this.getList()
