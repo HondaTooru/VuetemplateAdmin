@@ -8,9 +8,9 @@ for (let i = 0; i < count; i++) {
   list.push(Mock.mock({
     id: '@increment',
     title: '@csentence',
-    pushDate: Mock.mock('@datetime("yyyy-MM-dd HH:mm:ss")'),
+    pushDate: '@datetime("yyyy-MM-dd HH:mm:ss")',
     author: '@cname',
-    content: Mock.mock('@paragraph')
+    content: '@paragraph'
   }))
 }
 

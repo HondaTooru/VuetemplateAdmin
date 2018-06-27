@@ -1,7 +1,7 @@
 <template>
   <div class="sendnewmsg">
     <div class="tip">
-      <p>当前粉丝数量：1</p>
+      <p>当前粉丝数量：<el-tag type="success">1450K</el-tag></p>
     </div>
     <el-form label-position="right" label-width="100px" :model="newmsg" :rules="rules">
       <el-form-item label="选择模板">

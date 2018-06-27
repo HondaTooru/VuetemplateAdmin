@@ -2,7 +2,7 @@
   <div class="inviter">
     <div class="tip">
       <div class="search">
-        <el-input placeholder="请输入用户名" v-model="listQuery.keyword" @keyup.native.enter="handleSeach" class="input-with-select" ref="search">
+        <el-input clearable @clear="handleSeach" placeholder="请输入用户名" v-model="listQuery.keyword" @keyup.native.enter="handleSeach" class="input-with-select" ref="search">
           <el-button slot="append" icon="el-icon-search" v-waves @click.native="handleSeach" ></el-button>
         </el-input>
       </div>
@@ -10,7 +10,11 @@
     <el-table :data="list" border v-loading="loading">
       <el-table-column prop="id" label="艺人ID"></el-table-column>
       <el-table-column prop="actorName" label="艺名"></el-table-column>
-      <el-table-column prop="actorType" label="艺人类型"></el-table-column>
+      <el-table-column prop="actorType" label="艺人类型">
+        <template slot-scope="scope">
+          {{ scope.row.actorType | type }}
+        </template>
+      </el-table-column>
       <el-table-column prop="actorAvatar" label="头像">
        <template slot-scope="scope">
           <div class="avatar" :style="{backgroundImage: 'url(' + scope.row.avatar + ')'}"></div>  
@@ -59,6 +63,26 @@ export default {
       list: []
     }
   },
+  filters: {
+    type(status) {
+      const list = {
+        1: 'DJ',
+        2: 'DS',
+        3: 'MC',
+        4: 'VJ',
+        5: '主持人',
+        6: '嘉宾',
+        7: '服务员',
+        8: '模特',
+        9: '歌手',
+        10: '演员',
+        11: '灯光师',
+        12: '老司机',
+        13: '舞者',
+        14: '音响师' }
+      return list[status]
+    }
+  },
   methods: {
     getList() {
       this.loading = true
@@ -78,6 +102,7 @@ export default {
       })
     },
     handleSeach() {
+      this.listQuery.page = 1
       this.getList()
     },
     handleChange(val) {

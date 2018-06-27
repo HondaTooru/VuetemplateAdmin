@@ -120,7 +120,9 @@ export const constantRouterMap = [
       { path: 'notice', name: 'Notice', component: () => import('@/views/helpcenter/notice'), meta: { title: '公告', icon: 'notice' }},
       { path: 'manual', name: 'Manual', component: () => import('@/views/helpcenter/manual'), meta: { title: '使用手册', icon: 'manual' }},
       { path: 'operationguidelines', name: 'OperationGuidelines', component: () => import('@/views/helpcenter/operationalGuidelines'), meta: { title: '运营指南', icon: 'operationguidelines' }},
-      { path: 'feedback', name: 'feedback', component: () => import('@/views/helpcenter/feedback'), meta: { title: '意见反馈', icon: 'feedback' }}
+      { path: 'feedback', name: 'feedback', component: () => import('@/views/helpcenter/feedback'), meta: { title: '意见反馈', icon: 'feedback' }},
+      { path: 'edit/:id', name: 'Edit', component: () => import('@/views/helpcenter/edit'), meta: { title: '文章编辑' }, hidden: true },
+      { path: 'view/:id', name: 'ArticalView', component: () => import('@/views/helpcenter/view'), meta: { title: '文章详情' }, hidden: true }
     ]
   },
   { path: '*', redirect: '/404', hidden: true }

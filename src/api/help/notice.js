@@ -1,0 +1,1 @@
+export { getNoticeList } from './notice'

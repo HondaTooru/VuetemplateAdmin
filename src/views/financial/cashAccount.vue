@@ -1,6 +1,8 @@
 <template>
-  <div>
-    体现账号
+  <div class="cash">
+    <div class="tip">
+      <p>商家经营者扫此二维码进行提现微信绑定</p>
+    </div>
   </div>
 </template>
 
@@ -10,5 +12,5 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss" scope>
 </style>
