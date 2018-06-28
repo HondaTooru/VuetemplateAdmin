@@ -9,7 +9,6 @@ import bullyScreen from './bullyScreen'
 import { Opration, ActorCharge, BandList, SongList, getRecords, InviterList, getPushList } from './opration'
 import { FinanCialList, getSongRecord } from './financial'
 import { NoticeList } from './help'
-console.log(NoticeList)
 
 Mock.setup({
   timeout: '250-600'

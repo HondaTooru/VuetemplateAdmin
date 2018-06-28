@@ -1,12 +1,15 @@
 <template>
-    <div>
-        文章编辑
-    </div>
+    <article-detail></article-detail>
 </template>
 
 <script>
+import ArticleDetail from './components/ArticleDetail'
+
 export default {
-  name: 'edit'
+  name: 'edit',
+  components: {
+    ArticleDetail
+  }
 }
 </script>
 
