@@ -30,6 +30,7 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByusername(username, userInfo.password).then(response => {
+          console.log(response)
           if (response.data.code === 1) {
             const data = response.data.user
             setToken(data.token)
