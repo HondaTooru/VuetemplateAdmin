@@ -158,7 +158,6 @@ export default {
     getUserList() {
       this.loading = true
       userlist(this.listQuery).then(res => {
-        console.log(res)
         this.list = res.data.items
         this.total = res.data.total
         this.loading = false

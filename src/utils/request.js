@@ -1,9 +1,10 @@
 import axios from 'axios'
 // import { Message, MessageBox } from 'element-ui'
 import { Message } from 'element-ui'
-import store from '../store'
-import { getToken } from '@/utils/auth'
-
+// import store from '../store'
+// import { getToken } from '@/utils/auth'
+import { param2Obj } from './'
+// console.log(param2Obj(location.href))
 // 创建axios实例
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
@@ -12,8 +13,20 @@ const service = axios.create({
 
 // request拦截器
 service.interceptors.request.use(config => {
-  if (store.getters.token) {
-    config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+  // config.headers['customer_id'] = '1111'
+  // if (store.getters.token) {
+  //   config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+  // }
+  if (config.method === 'post') {
+    config.data = {
+      ...config.data,
+      ...param2Obj(location.href)
+    }
+  } else if (config.method === 'get') {
+    config.params = {
+      ...config.params,
+      ...param2Obj(location.href)
+    }
   }
   return config
 }, error => {

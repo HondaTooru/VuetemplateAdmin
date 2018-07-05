@@ -39,7 +39,11 @@ export default {
       items: pageList
     }
   },
-  updateUser: () => ({ msg: '修改成功' }),
+  updateUser: config => {
+    return ({
+      msg: '修改成功'
+    })
+  },
   speechUser: () => ({ msg: '操作成功' }),
   feedback: () => ({ msg: '提交成功' })
 }
