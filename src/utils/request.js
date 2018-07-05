@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 // import store from '../store'
 // import { getToken } from '@/utils/auth'
-import { param2Obj } from './'
+// import { param2Obj } from './'
 // console.log(param2Obj(location.href))
 // 创建axios实例
 const service = axios.create({
@@ -20,12 +20,14 @@ service.interceptors.request.use(config => {
   if (config.method === 'post') {
     config.data = {
       ...config.data,
-      ...param2Obj(location.href)
+      // ...param2Obj(location.href)
+      ...{ customer_id: 'UG5aaVI0' }
     }
   } else if (config.method === 'get') {
     config.params = {
       ...config.params,
-      ...param2Obj(location.href)
+      // ...param2Obj(location.href)
+      ...{ customer_id: 'UG5aaVI0' }
     }
   }
   return config

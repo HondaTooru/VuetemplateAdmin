@@ -87,3 +87,15 @@ a:hover {
     font-size: 12px;
   }
 }
+.area-select-wrap {
+  width: 100%;
+  display: inline-block;
+  .area-select {
+    &:nth-of-type(1) {
+      margin-left: 0
+    }
+    .area-selected-trigger {
+       padding-top: 0 !important
+    }
+  }
+}

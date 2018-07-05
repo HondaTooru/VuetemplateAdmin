@@ -190,6 +190,10 @@ are-we-there-yet@~1.1.2:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
 
+area-data@^5.0.6:
+  version "5.0.6"
+  resolved "http://registry.npm.taobao.org/area-data/download/area-data-5.0.6.tgz#c381c3f88ff9e1050accd07549d206fce2a28d13"
+
 argparse@^1.0.7:
   version "1.0.10"
   resolved "http://registry.npm.taobao.org/argparse/download/argparse-1.0.10.tgz#bcd6791ea5ae09725e17e5ad988134cd40b3d911"
@@ -3837,6 +3841,10 @@ lodash.clonedeep@^4.3.2:
   version "4.5.0"
   resolved "http://registry.npm.taobao.org/lodash.clonedeep/download/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
+lodash.find@^4.6.0:
+  version "4.6.0"
+  resolved "http://registry.npm.taobao.org/lodash.find/download/lodash.find-4.6.0.tgz#cb0704d47ab71789ffa0de8b97dd926fb88b13b1"
+
 lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "http://registry.npm.taobao.org/lodash.memoize/download/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -6561,6 +6569,12 @@ vm-browserify@0.0.4:
   resolved "http://registry.npm.taobao.org/vm-browserify/download/vm-browserify-0.0.4.tgz#5d7ea45bbef9e4a6ff65f95438e0a87c357d5a73"
   dependencies:
     indexof "0.0.1"
+
+vue-area-linkage@^5.0.0:
+  version "5.0.0"
+  resolved "http://registry.npm.taobao.org/vue-area-linkage/download/vue-area-linkage-5.0.0.tgz#4455e6533f792c22732c2fd279b4f62875f3be44"
+  dependencies:
+    lodash.find "^4.6.0"
 
 vue-hot-reload-api@^2.2.0:
   version "2.3.0"
