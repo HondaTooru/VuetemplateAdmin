@@ -2,11 +2,11 @@
   <div class="gift">
     <el-table :data="list" border v-loading="loading">
       <el-table-column
-        prop="giftName"
+        prop="gift_name"
         label="道具名称"
       ></el-table-column>
       <el-table-column
-      prop="defaultPrice"
+      prop="default_price"
       label="系统价格（单位：元）"
       >
       </el-table-column>
@@ -14,15 +14,15 @@
         label="自定义价格（单位：元）"
         >
         <template slot-scope="scope">
-            <el-input v-if="scope.row.edit" v-model="scope.row.setPrice" prefix-icon="el-icon-edit"></el-input>
+            <el-input v-if="scope.row.edit" v-model="scope.row.design_price" prefix-icon="el-icon-edit"></el-input>
            <template v-else>
-           {{ scope.row.setPrice }}
+           {{ scope.row.design_price }}
          </template>
         </template>
       </el-table-column>
       <el-table-column label="是否开启">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.isOpen" inactive-color="#ff4949" :disabled="!scope.row.edit"></el-switch>
+          <el-switch :active-value="1" :inactive-value="0" v-model="scope.row.status" inactive-color="#ff4949" :disabled="!scope.row.edit"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -39,13 +39,14 @@
 </template>
 
 <script>
-import { GiftList } from '@/api/giftset'
+import { getGifts, setGifts } from '@/api/function'
 
 export default {
   name: 'giftset',
   data() {
     return {
       loading: false,
+      s: 100,
       list: []
     }
   },
@@ -55,13 +56,13 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      GiftList().then(res => {
+      getGifts().then(res => {
         console.log(res)
         this.loading = false
-        this.list = res.data.list.map(item => {
+        this.list = res.data.data.map(item => {
           this.$set(item, 'edit', false)
-          item.original = item.setPrice
-          item.originalState = item.isOpen
+          item.original = item.design_price
+          item.originalState = item.status
           return item
         })
       }).catch(err => {
@@ -70,19 +71,29 @@ export default {
       })
     },
     confirmEdit(item) {
-      item.original = item.setPrice
-      item.originalState = item.isOpen
-      item.edit = false
-      this.$message({
-        message: '修改成功',
-        type: 'success',
-        duration: 2000
+      setGifts(item).then(res => {
+        if (res.data.code) {
+          item.original = item.design_price
+          item.originalState = item.status
+          item.edit = false
+          this.$message({
+            message: res.data.msg,
+            type: 'success',
+            duration: 3 * 1000
+          })
+        } else {
+          this.$message({
+            message: res.data.msg,
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       })
     },
     cancelEdit(item) {
       item.edit = false
-      item.setPrice = item.original
-      item.isOpen = item.originalState
+      item.design_price = item.original
+      item.status = item.originalState
       this.$message({
         message: '您取消了修改',
         type: 'warning',

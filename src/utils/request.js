@@ -39,7 +39,19 @@ service.interceptors.request.use(config => {
 
 // respone拦截器
 service.interceptors.response.use(
-  resopnse => resopnse,
+  // response => {
+  //   const res = response.data
+  //   if (res.code === 1) {
+  //     return res
+  //   } else {
+  //     Message({
+  //       message: res.msg,
+  //       type: 'error',
+  //       duration: 3 * 1000
+  //     })
+  //   }
+  // },
+  response => response,
   // response => {
   // /**
   // * code为非20000是抛错 可结合自己业务进行修改

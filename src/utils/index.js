@@ -98,3 +98,11 @@ export function param2Obj(url) {
   }
   return JSON.parse('{"' + decodeURIComponent(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
 }
+
+export function setMapToObj(strMap) {
+  const obj = Object.create(null)
+  for (const [k, v] of strMap) {
+    obj[k] = v
+  }
+  return obj
+}

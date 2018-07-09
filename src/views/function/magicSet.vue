@@ -1,16 +1,16 @@
 <template>
   <div class="magic">
     <el-table border :data="list" v-loading="loading">
-      <el-table-column label="道具名称" prop="magincName"></el-table-column>
-      <el-table-column label="系统价格（单位：元）" prop="defaultPrice"></el-table-column>
+      <el-table-column label="道具名称" prop="gift_name"></el-table-column>
+      <el-table-column label="系统价格（单位：元）" prop="default_price"></el-table-column>
       <el-table-column label="自定义价格（单位：元）">
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input class="edit-input" v-model.number="scope.row.setPrice" v-if="scope.row.edit" prefix-icon="el-icon-edit"></el-input>
+            <el-input class="edit-input" v-model.number="scope.row.design_price" v-if="scope.row.edit" prefix-icon="el-icon-edit"></el-input>
             <el-button type="warning" class="cancel-button" icon="el-icon-refresh" v-if="scope.row.edit" @click="cancelEdit(scope.row)">取消</el-button>
           </template>
           <template v-else>
-            {{ scope.row.setPrice }}
+            {{ scope.row.design_price }}
           </template>  
         </template>
       </el-table-column>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { getMagicList } from '@/api/magicset'
+import { getMagic, setMagic } from '@/api/function'
 
 export default {
   name: 'magicset',
@@ -42,14 +42,22 @@ export default {
   methods: {
     getList() {
       this.loading = true
-      getMagicList().then(res => {
+      getMagic().then(res => {
         console.log(res)
-        this.list = res.data.list.map(item => {
-          this.$set(item, 'edit', false)
-          item.original = item.setPrice // will be used when user click cancel button
-          return item
-        })
         this.loading = false
+        if (res.data.code) {
+          this.list = res.data.data.map(item => {
+            this.$set(item, 'edit', false)
+            item.original = item.design_price // will be used when user click cancel button
+            return item
+          })
+        } else {
+          this.$message({
+            message: res.data.msg,
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       }).catch(err => {
         this.loading = false
         return err
@@ -57,7 +65,7 @@ export default {
     },
     cancelEdit(item) {
       item.edit = false
-      item.setPrice = item.original
+      item.design_price = item.original
       this.$message({
         message: '您取消了修改',
         type: 'warning',
@@ -65,12 +73,22 @@ export default {
       })
     },
     confirmEdit(item) {
-      item.edit = false
-      item.original = item.setPrice
-      this.$message({
-        message: '修改成功',
-        type: 'success',
-        duration: 2000
+      setMagic(item).then(res => {
+        if (res.data.code) {
+          item.edit = false
+          item.original = item.design_price
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            duration: 2000
+          })
+        } else {
+          this.$message({
+            message: res.data.msg,
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       })
     }
   }

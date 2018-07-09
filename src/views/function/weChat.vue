@@ -31,7 +31,7 @@ export default {
       this.$message({
         message: '复制成功',
         type: 'success',
-        duration: 1500
+        duration: 3 * 1000
       })
     }
   }

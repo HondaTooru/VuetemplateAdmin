@@ -2,10 +2,10 @@
   <div class="bullyScreen">
     <el-form :model="form" label-position="right" label-width="100px">
       <el-form-item label="霸小视频">
-        <el-switch v-model="form.video"></el-switch>
+        <el-switch v-model="form.bars_vedio"></el-switch>
       </el-form-item>
       <el-form-item label="新运霸屏">
-        <el-switch v-model="form.luck"></el-switch>
+        <el-switch v-model="form.bars_lucky"></el-switch>
       </el-form-item>
     </el-form>
     <div class="tip">
@@ -13,23 +13,23 @@
     </div>
     <el-table :data="list" border v-loading="loading">
       <el-table-column
-      label="时间"
+      label="时间(秒)"
       >
         <template slot-scope="scope">
          <template v-if="scope.row.edit">
-            <el-input prefix-icon="el-icon-edit" v-model.number="scope.row.time"></el-input>
+            <el-input prefix-icon="el-icon-edit" v-model.number="scope.row.bartime"></el-input>
          </template>
-         <span v-else>{{ scope.row.time }}</span>
+         <span v-else>{{ scope.row.bartime }}</span>
         </template>
       </el-table-column>
       <el-table-column
-      label="价格"
+      label="价格(元)"
       >
         <template slot-scope="scope">
           <template v-if="scope.row.edit">
-            <el-input prefix-icon="el-icon-edit" v-model.number="scope.row.price"></el-input>
+            <el-input prefix-icon="el-icon-edit" v-model.number="scope.row.barprices"></el-input>
           </template>
-          <span v-else>{{ scope.row.price}}</span>
+          <span v-else>{{ scope.row.barprices}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -41,7 +41,7 @@
             </template>
             <template v-else>
               <el-button type="primary" icon="el-icon-edit" @click.native.prevent="scope.row.edit = !scope.row.edit">编辑</el-button>
-              <el-button type="danger" icon="el-icon-remove-outline" @click.native.prevent="deleteRow(scope.row.$index, list)">删除</el-button>
+              <el-button type="danger" icon="el-icon-remove-outline" @click.native.prevent="deleteRow(scope.row)">删除</el-button>
             </template>
           </el-button-group>
         </template>
@@ -51,19 +51,19 @@
       <p>添加霸屏信息</p>
     </div>
     <el-table :data="add" border>
-      <el-table-column label="时间">
+      <el-table-column label="时间(秒)">
         <template slot-scope="scope">
-          <el-input v-model.number="scope.row.time"></el-input>
+          <el-input v-model.number="scope.row.bartime" prefix-icon="el-icon-edit"></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="价格">
+      <el-table-column label="价格(元)">
         <template slot-scope="scope">
-          <el-input v-model.number="scope.row.price"></el-input>
+          <el-input v-model.number="scope.row.barprices" prefix-icon="el-icon-edit"></el-input>
         </template>
       </el-table-column>
       <el-table-column>
         <template slot-scope="scope">
-          <el-button type="primary" @click.native.prevent="addItem" icon="el-icon-circle-plus-outline">添加</el-button>
+          <el-button type="primary" @click.native.prevent="addItem" icon="el-icon-circle-plus-outline" :loading="isLoading">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -71,20 +71,21 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/bullyScreen'
+import { getBullyScreen, setBullyScreen } from '@/api/function'
 
 export default {
   name: 'bullyscreen',
   data() {
     return {
       loading: true,
+      isLoading: false,
       form: {
-        video: true,
-        luck: false
+        bars_lucky: '',
+        bars_vedio: ''
       },
       list: [],
       add: [
-        { time: '', price: '' }
+        { bartime: '', barprices: '' }
       ]
     }
   },
@@ -92,37 +93,68 @@ export default {
     this.getList()
   },
   methods: {
-    deleteRow(index, rows) {
-      rows.splice(index, 1)
+    deleteRow(row) {
+      this.loading = true
+      setBullyScreen({ id: row.id, action: 'del' }).then(res => {
+        this.loading = false
+        this.list.splice(this.list.indexOf(row), 1)
+        this.$message({
+          message: '删除成功',
+          type: 'success',
+          duration: 3 * 1000
+        })
+      })
     },
     addItem() {
-      if ((this.add[0].time).toString().trim() && (this.add[0].price).toString().trim()) {
-        this.list.push(this.add[0])
-        this.$notify({
-          title: '成功',
-          message: '添加成功',
-          type: 'success',
-          duration: 2000
-        })
+      if ((this.add[0].bartime).toString().trim() && (this.add[0].barprices).toString().trim()) {
+        this.isLoading = true
+        const data = this.add[0]
+        setBullyScreen(data).then(res => {
+          this.isLoading = false
+          console.log(res)
+          if (res.data.code === 1) {
+            this.list.push(Object.assign({}, data))
+            this.add[0].bartime = this.add[0].barprices = ''
+            this.$message({
+              message: '添加成功',
+              type: 'success',
+              duration: 3 * 1000
+            })
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        }).catch(() => { this.isLoading = false })
       } else {
         this.$message({
           message: '请把信息输入完整',
-          type: 'warning',
-          duration: 2000
+          type: 'error',
+          duration: 3 * 1000
         })
       }
     },
     getList() {
       this.loading = true
-      fetchList().then(res => {
-        console.log(res.data.list)
+      getBullyScreen().then(res => {
         this.loading = false
-        this.list = res.data.list.map(item => {
-          this.$set(item, 'edit', false)
-          item.originalTime = item.time
-          item.originalPrice = item.price
-          return item
-        })
+        if (res.data.code === 1) {
+          this.from = res.data.switch
+          this.list = res.data.data.map(item => {
+            this.$set(item, 'edit', false)
+            item.originalTime = item.bartime
+            item.originalPrice = item.barprices
+            return item
+          })
+        } else {
+          this.$message({
+            message: 'error',
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       }).catch(err => {
         this.loading = false
         return err
@@ -139,14 +171,49 @@ export default {
       })
     },
     confirmEdit(row) {
-      row.originalTime = row.time
-      row.originalPrice = row.price
-      row.edit = !row.edit
-      this.$message({
-        message: '修改成功',
-        type: 'success',
-        duration: 2000
-      })
+      try {
+        this.list.forEach(item => {
+          if (item.originalTime === row.bartime && item.id !== row.id) {
+            this.$message({
+              message: '已经存在重复的时间',
+              type: 'error',
+              duration: 3 * 1000
+            })
+            this.flag = false
+            throw new Error('Error')
+          } else { this.flag = true }
+        })
+      } catch (e) {
+        console.log(e)
+      }
+      if (this.flag) {
+        this.loading = true
+        const { id, bartime, barprices } = row
+        const data = {
+          id: id,
+          barprices: barprices,
+          bartime: bartime
+        }
+        setBullyScreen(data).then(res => {
+          this.loading = false
+          if (res.data.code === 1) {
+            row.originalTime = row.bartime
+            row.originalPrice = row.barprices
+            row.edit = !row.edit
+            this.$message({
+              message: '修改成功',
+              type: 'success',
+              duration: 3 * 1000
+            })
+          } else {
+            this.$message({
+              message: res.data.msg,
+              type: 'error',
+              duration: 3 * 1000
+            })
+          }
+        })
+      }
     }
   }
 }

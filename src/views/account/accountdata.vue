@@ -1,6 +1,10 @@
 <template>
   <div class="account">
-    <el-form ref="account" :model="account" :rules="rules">
+    <el-form ref="acc" :model="account" :rules="rules">
+      <el-form-item label="大屏幕ID">
+        <el-input v-model="account.login_name" disabled></el-input>
+        <el-button type="primary" style="margin-top: 20px;" v-clipboard:copy='account.login_name' v-clipboard:success="clipboard">复制大屏幕ID</el-button>
+      </el-form-item>
       <el-form-item label="商家名称" prop="custom_name">
         <el-input v-model="account.custom_name"></el-input>
       </el-form-item>
@@ -20,7 +24,7 @@
       <el-form-item label="大屏幕口令" prop="password">
         <el-input v-model="account.password"></el-input>
       </el-form-item>
-        <el-button type="primary" @click="saveData('account')" :loading="loading">保存</el-button>
+        <el-button type="primary" @click="updateUser" :loading="loading">保存</el-button>
       </el-form-item>
     </el-form>
    
@@ -29,7 +33,8 @@
 
 <script>
 import { pcaa } from 'area-data'
-import { editInfo } from '@/api/acc'
+import clipboard from '@/directive/clipboard'
+import { editInfo, getInfo } from '@/api/acc'
 
 export default {
   name: 'accountdata',
@@ -39,7 +44,7 @@ export default {
         callback(new Error('联系电话号码不能为空'))
       } else {
         if (/^[1][3,4,5,7,8][0-9]{9}$/.test(value)) {
-          return true
+          callback()
         } else {
           callback(new Error('您输入的手机号码格式错误'))
         }
@@ -48,17 +53,18 @@ export default {
     return {
       loading: false,
       pcaa: pcaa,
-      location: ['110000', '110100', '110101'],
+      location: [],
       account: {
         custom_name: '',
         contacter: '',
         phone: '',
-        location_p: ['110000'],
-        location_c: ['110100'],
-        location_a: ['110101'],
+        location_p: [],
+        location_c: [],
+        location_a: [],
         address: '',
         update_time: '',
-        password: ''
+        password: '',
+        login_name: ''
       },
       rules: {
         custom_name: [
@@ -79,25 +85,42 @@ export default {
       }
     }
   },
+  directives: {
+    clipboard
+  },
+  created() {
+    this.getList()
+  },
   methods: {
-    saveData(formName) {
+    updateUser() {
       this.loading = true
-      this.$refs[formName].validate(valid => {
-        console.log(valid)
+      this.$refs['acc'].validate(valid => {
         if (valid) {
-          console.log(333)
-          this.loading = false
+          editInfo(this.account).then(res => {
+            this.loading = false
+            this.$message({
+              message: res.data.msg,
+              type: 'success',
+              duration: 3 * 1000
+            })
+          })
+        } else { this.loading = false }
+      })
+    },
+    getList() {
+      getInfo().then(res => {
+        if (res.data.code === 1) {
+          const data = res.data.data
+          this.account = Object.assign({}, this.account, data)
+          const location = `${data.location_p},${data.location_c},${data.location_a}`.split(',')
+          this.location = location
         } else {
-          this.loading = false
+          this.$message({
+            message: res.data.msg,
+            type: 'error',
+            duration: 3 * 1000
+          })
         }
-        // if (valid) {
-        //   editInfo(this.account).then(res => {
-        //     this.loading = false
-        //     console.log(res)
-        //   })
-        // } else {
-        //   this.loading = false
-        // }
       })
     },
     setPosition(val) {
@@ -105,6 +128,13 @@ export default {
       this.account.location_p = position[0]
       this.account.location_c = position[1]
       this.account.location_a = position[2]
+    },
+    clipboard() {
+      this.$message({
+        message: '复制成功',
+        type: 'success',
+        duration: 3 * 1000
+      })
     }
   }
 }

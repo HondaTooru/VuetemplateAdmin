@@ -9,13 +9,13 @@
         </el-form-item>
         <div v-if="update.group !== 1">
         <el-form-item label="每日免费霸屏次数" prop="freeBully">
-          <el-input v-model.number="update.freeBully"></el-input>
+          <el-input v-model.number="update.free_ba"></el-input>
         </el-form-item>
         <el-form-item label="每日免费礼物/魔法棒次数" prop="freeGift">
-          <el-input v-model.number="update.freeGift"></el-input>
+          <el-input v-model.number="update.free_magic"></el-input>
         </el-form-item>  
         <el-form-item label="每日免费点歌次数" prop="freeSong">
-          <el-input v-model.number="update.freeSong"></el-input>
+          <el-input v-model.number="update.free_sing"></el-input>
         </el-form-item>          
         </div>
         <el-form-item>
@@ -28,25 +28,27 @@
     </el-dialog>
     <div class="tip">
       <div class="rightSearch">
-        <el-input ref="search" v-model="listQuery.name" @keyup.native.enter="getUserList" @clear="getUserList" placeholder="请输入用户名" class="input-with-select" clearable>
+        <el-input ref="search" v-model="listQuery.keyword" @keyup.native.enter="getUserList" @clear="getUserList" placeholder="请输入用户名、城市名" class="input-with-select" clearable>
           <el-select v-model="listQuery.group" slot="prepend" placeholder="请选择" @change="handleGroup" clearable>
             <el-option v-for="i in 3" :key="i" :value="i" :label="i | fomatGroup"></el-option>
           </el-select>
-          <el-button type="primary" slot="append" icon="el-icon-search" v-waves @click.native="handleSearch"></el-button>
+          <el-button type="primary" slot="append" icon="el-icon-search" v-waves @click.native="getUserList"></el-button>
         </el-input>
       </div>
     </div>
     <el-table border :data="list" v-loading="loading" :key="tablekey">
-      <el-table-column prop="id" label="id" width="50"></el-table-column>
-      <el-table-column prop="realname" label="昵称"></el-table-column>
+      <el-table-column prop="id" label="id" width="150"></el-table-column>
+      <el-table-column prop="weixin_name" label="昵称"></el-table-column>
       <el-table-column label="性别">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.sex ? '' : 'danger'">{{ scope.row.sex ? '男' : '女' }}</el-tag>
+          <template v-if="scope.row.sex">
+            <el-tag :type="scope.row.sex === 1 ? '' : 'danger'">{{ scope.row.sex === 1 ? '男' : '女' }}</el-tag>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="头像">
         <template slot-scope="scope">
-          <div class="avatar" :style="{backgroundImage: 'url(' + scope.row.avatar + ')'}"></div>  
+          <div class="avatar" :style="{backgroundImage: 'url(' + scope.row.weixin_headimgurl + ')'}"></div>  
         </template>    
       </el-table-column>
       <el-table-column prop="city" label="城市"></el-table-column>
@@ -82,7 +84,7 @@
 </template>
 
 <script>
-import { userlist, updateUser, speechUser } from '@/api/userlist'
+import { getUserList, editUser, userStatus } from '@/api/function'
 import waves from '@/directive/waves'
 export default {
   name: 'userslist',
@@ -95,14 +97,17 @@ export default {
       loading: true,
       dialogFormVisible: false,
       updateBtn: false,
-      update: {},
+      update: {
+        free_ba: 0,
+        free_sing: 0,
+        free_magic: 0
+      },
       listQuery: {
         group: undefined,
-        name: undefined,
+        keyword: undefined,
         type: undefined,
         page: 1,
-        limit: 10,
-        sort: '+id'
+        limit: 10
       },
       rules: {
         freeBully: [
@@ -135,14 +140,11 @@ export default {
       this.$confirm(`您确认此用户${msg}？`, '提示', {
         type: 'warning'
       }).then(() => {
-        speechUser(item.row).then(res => {
-          // this.list.splice(item.$index, 1)
-          item.isSpeech = !item.isSpeech
+        userStatus({ id: item.id, status: 0 }).then(res => {
           this.$message({
             type: 'success',
             message: res.data.msg
           })
-          // if (!this.list.length) this.getUserList()
         })
       }).catch(error => {
         return error
@@ -157,10 +159,19 @@ export default {
     },
     getUserList() {
       this.loading = true
-      userlist(this.listQuery).then(res => {
-        this.list = res.data.items
-        this.total = res.data.total
-        this.loading = false
+      getUserList(this.listQuery).then(res => {
+        if (res.data.code) {
+          this.list = res.data.data
+          this.total = res.data.count
+          this.loading = false
+        } else {
+          this.loading = false
+          this.$message({
+            message: res.data.msg,
+            type: 'error',
+            duration: 3 * 1000
+          })
+        }
       })
     },
     handleViews(row) {
@@ -174,22 +185,30 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (valid) {
           const tempData = Object.assign({}, this.update)
+          console.log(tempData)
           this.updateBtn = true
-          updateUser(tempData).then(res => {
+          editUser(tempData).then(res => {
             this.updateBtn = false
-            for (const v of this.list) {
-              if (this.update.id === v.id) {
-                const index = this.list[v]
-                this.list.splice(index, 1, this.update)
-                this.dialogFormVisible = false
-                this.$notify({
-                  title: '成功',
-                  message: res.data.msg,
-                  type: 'success',
-                  duration: 2000
-                })
-                break
+            if (res.data.code) {
+              for (const v of this.list) {
+                if (this.update.id === v.id) {
+                  const index = this.list[v]
+                  this.list.splice(index, 1, this.update)
+                  this.dialogFormVisible = false
+                  this.$message({
+                    message: res.data.msg,
+                    type: 'success',
+                    duration: 3 * 1000
+                  })
+                  break
+                }
               }
+            } else {
+              this.$message({
+                message: res.data.msg,
+                type: 'error',
+                duration: 3 * 1000
+              })
             }
           })
         }
